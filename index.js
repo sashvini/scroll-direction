@@ -1,7 +1,7 @@
 'use strict';
 const isDOM = require('is-dom');
 const isFunction = require('is-function');
-let pervScrollTop = 0;
+let prevScrollTop = 0;
 
 module.exports = (element,cb) => {
   
@@ -14,14 +14,9 @@ module.exports = (element,cb) => {
   }
 
   element.addEventListener('scroll',() => { 
-     let currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-     if (currentScrollTop > pervScrollTop) {
-        pervScrollTop = currentScrollTop;
-        return cb(0);
-     } else {
-        pervScrollTop = currentScrollTop;
-        return cb(1);
-     }
-     pervScrollTop = currentScrollTop;
+    let currentScrollTop = element.scrollTop;
+    let dir = currentScrollTop > prevScrollTop ? 0 : 1;
+    prevScrollTop = currentScrollTop;
+    return cb(dir);
   }, false);
 };
