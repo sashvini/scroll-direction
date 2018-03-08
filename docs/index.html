@@ -7,13 +7,30 @@
 					acceptAllDevices: true,
 					optionalServices: ['battery_service']
 				})
-				.then(device => {console.log(device.name);})
-				.catch(error => {console.log(error)});
+				.then(device => {
+					console.log(device.name);
+					document.querySelector('#device').textContent = device.name;
+					device.gatt.connect();
+				})
+				.then(server => {
+					return server.getPrimaryService('battery_service');
+				})
+				.then(characteristic => {
+					return characteristic.readValue();
+				})
+				.then(value => {
+					console.log('Battery percentage is ' + value.getUint8(0));
+					document.querySelector('#level').textContent = value.getUint8(0);
+				})
+				.catch(error => {
+					console.log(error);
+				});
 			}
 		</script>
   </head>
   <body>
     <h1>Welcome!</h1>
 		Bluetooth: <button onclick="connect()">Turn On</button>
+		<span id="device"></span>: Battery Level <span id="level"></span>
   </body>
 </html>
